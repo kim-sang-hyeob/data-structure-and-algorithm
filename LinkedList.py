@@ -10,6 +10,18 @@ class LinkedList:
         self.head = None  # 링크드 리스트의 가장 앞 노드
         self.tail = None  # 링크드 리스트의 가장 뒤 노드
 
+    def insert_after(self, previous_node , data):
+        new_node = Node(data)
+
+        # 1. 끝자리 에 추가 2. 끝자리를 제외하고 추가
+        if previous_node is self.tail: # 끝자리에 추가
+            self.tail.next = new_node
+            self.tail=new_node
+        else: # 노드 사이에 삽입
+            next=previous_node.next
+            new_node.next=next
+            previous_node.next=new_node
+
     def find_node_with_data(self, data):
         """링크드 리스트에서 탐색 연산 메소드. 단, 해당 노드가 없으면 None을 리턴한다"""
 
