@@ -18,12 +18,10 @@ def heapify(tree, index, tree_size):
         else:
             if tree[left_child_index] > tree[right_child_index]:
                 swap(tree , index , left_child_index)
-                
                 heapify(tree , left_child_index , tree_size )
 
             else:
                 swap(tree , index, right_child_index)
-                
                 heapify(tree , right_child_index , tree_size )
     else:
         return 
