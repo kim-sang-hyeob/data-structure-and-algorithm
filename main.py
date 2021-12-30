@@ -1,46 +1,44 @@
-from heapify_code import *
+from collections import deque
+from subway_graph import *
 
-class PriorityQueue:
-    """힙으로 구현한 우선순위 큐"""
-    def __init__(self):
-        self.heap = [None]  # 파이썬 리스트로 구현한 힙
+def dfs(graph, start_node):
+    """dfs 함수"""
+    stack = deque()  # 빈 스택 생성
 
-    def insert(self, data):
-        """삽입 메소드"""
-        self.heap.append(data)  # 힙의 마지막에 데이터 추가
-        reverse_heapify(self.heap, len(self.heap)-1) # 삽입된 노드(추가된 데이터)의 위치를 재배치
+    # 모든 노드를 처음 보는 노드로 초기화
+    for station_node in graph.values():
+        station_node.visited = 0
+    
+    # 작성 
+    start_node.visited = 1
+    stack.append(start_node)
 
-    def extract_max(self):
-        """최우선순위 데이터 추출 메소드"""
-        tree_size=len(self.heap)
-        return_num=self.heap[1]
-        swap(self.heap , 1 , tree_size-1)
-        self.heap.pop()
-        heapify(self.heap , 1 , len(self.heap))
-        
+    while len(stack) != 0:
 
-        return return_num
+        subtract_node=stack.pop()
+        subtract_node.visited = 2 
+        for find_node in subtract_node.adjacent_stations :
+            if find_node.visited == 0:
+                find_node.visited = 1
+                stack.append(find_node)
 
 
 
-    def __str__(self):
-        return str(self.heap)
+stations = create_station_graph("C:\\python_data\\data-structure-and-algorithm\\new_stations.txt")  # stations.txt 파일로 그래프를 만든다
 
-# 출력 코드
-priority_queue = PriorityQueue()
+gangnam_station = stations["강남"]
 
-priority_queue.insert(6)
-priority_queue.insert(9)
-priority_queue.insert(1)
-priority_queue.insert(3)
-priority_queue.insert(10)
-priority_queue.insert(11)
-priority_queue.insert(13)
+# 강남역과 경로를 통해 연결된 모든 노드를 탐색
+dfs(stations, gangnam_station)
 
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
-print(priority_queue.extract_max())
+# 강남역과 서울 지하철 역들 연결됐는지 확인
+print(stations["강동구청"].visited)
+print(stations["평촌"].visited)
+print(stations["송도"].visited)
+print(stations["개화산"].visited)
+
+# 강남역과 대전 지하철 역들 연결됐는지 확인
+print(stations["반석"].visited)
+print(stations["지족"].visited)
+print(stations["노은"].visited)
+print(stations["(대전)신흥"].visited)
