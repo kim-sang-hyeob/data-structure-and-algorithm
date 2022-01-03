@@ -1,44 +1,68 @@
 from collections import deque
 from subway_graph import *
 
-def dfs(graph, start_node):
-    """dfs 함수"""
-    stack = deque()  # 빈 스택 생성
+# 코드를 추가하세요
+def bfs(graph, start_node):
+    """최단 경로용 bfs 함수"""
+    queue = deque()  # 빈 큐 생성
 
-    # 모든 노드를 처음 보는 노드로 초기화
+    # 모든 노드를 방문하지 않은 노드로 표시, 모든 predecessor는 None으로 초기화
     for station_node in graph.values():
-        station_node.visited = 0
+        station_node.visited = False
+        station_node.predecessor = None
+
+    # 시작점 노드를 방문 표시한 후 큐에 넣어준다
+    start_node.visited = True
+    queue.append(start_node)
     
-    # 작성 
-    start_node.visited = 1
-    stack.append(start_node)
-
-    while len(stack) != 0:
-
-        subtract_node=stack.pop()
-        subtract_node.visited = 2 
-        for find_node in subtract_node.adjacent_stations :
-            if find_node.visited == 0:
-                find_node.visited = 1
-                stack.append(find_node)
+    
+    while queue:  # 큐에 노드가 있을 때까지
+        current_station = queue.popleft()  # 큐의 가장 앞 데이터를 갖고 온다
+        
+        for neighbor in current_station.adjacent_stations:  # 인접한 노드를 돌면서
+            if not neighbor.visited:  # 방문하지 않은 노드면
+                neighbor.visited = True  # 방문 표시를 하고
+                neighbor.predecessor = current_station
+                queue.append(neighbor)  # 큐에 넣는다
 
 
+def back_track(destination_node):
+    """최단 경로를 찾기 위한 back tracking 함수"""
+    res_str = ""  # 리턴할 결과 문자열
 
-stations = create_station_graph("C:\\python_data\\data-structure-and-algorithm\\new_stations.txt")  # stations.txt 파일로 그래프를 만든다
+    res_str = ""  # 리턴할 결과 문자열
+    temp = destination_node  #  도착 노드에서 시작 노드까지 찾아가는 데 사용할 변수
 
-gangnam_station = stations["강남"]
+    # 시작 노드까지 갈 때까지
+    while temp is not None:
+        res_str = f"{temp.station_name} {res_str}"  # 결과 문자열에 역 이름을 더하고
+        temp = temp.predecessor  # temp를 다음 노드로 바꿔준다
 
-# 강남역과 경로를 통해 연결된 모든 노드를 탐색
-dfs(stations, gangnam_station)
+    return res_str
 
-# 강남역과 서울 지하철 역들 연결됐는지 확인
-print(stations["강동구청"].visited)
-print(stations["평촌"].visited)
-print(stations["송도"].visited)
-print(stations["개화산"].visited)
 
-# 강남역과 대전 지하철 역들 연결됐는지 확인
-print(stations["반석"].visited)
-print(stations["지족"].visited)
-print(stations["노은"].visited)
-print(stations["(대전)신흥"].visited)
+    
+    '''res= []
+    res.append(destination_node.station_name)
+    # predecessor == None 일때 반복문을 멈출것임 
+    station = destination_node
+    while station.predecessor != None :
+        back_station=station.predecessor
+        res.append(back_station.station_name)
+        station = back_station
+    
+    res.reverse()
+    for station in res:
+        res_str += station + " "
+    return res_str'''
+
+
+
+
+
+
+
+stations = create_station_graph("C:\python_data\data-structure-and-algorithm\stations.txt")  # stations.txt 파일로 그래프를 만든다
+
+bfs(stations, stations["을지로3가"])  # 지하철 그래프에서 을지로3가역을 시작 노드로 bfs 실행
+print(back_track(stations["강동구청"]))  # 을지로3가에서 강동구청역까지 최단 경로 출력
